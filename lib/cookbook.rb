@@ -12,6 +12,10 @@ class Cookbook
     return @recipes
   end
 
+  def find(index)
+    @recipes[index]
+  end
+
   def add_recipe(recipe)
     @recipes << recipe
     save_to_csv
@@ -25,14 +29,15 @@ class Cookbook
   def save_to_csv
     CSV.open(@csv_file_path, 'wb') do |csv|
       @recipes.each do |recipe|
-        csv << [recipe.name, recipe.description]
+        csv << [recipe.name, recipe.description, recipe.prep_time, recipe.done]
       end
     end
   end
 
   def read_csv
     CSV.foreach(@csv_file_path) do |row|
-      @recipes << Recipe.new(row[0], row[1])
+      boolean = row[3] == 'true'
+      @recipes << Recipe.new(row[0], row[1], row[2], boolean)
     end
   end
 end
